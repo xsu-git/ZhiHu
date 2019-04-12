@@ -11,7 +11,8 @@
 -----
 
 
-###1.配置 ###
+1.配置
+---
 
 **a.  实例化 ZhiHu 类** 
 
@@ -24,29 +25,33 @@
 
 **b. 数据库表字段** 
 
-######zhihu_answer 表格字段 #######
+*zhihu_answer 表格字段* 
 
 ![](image/postgres1.png )
 
-######zhihu_question_id 表格字段  #######
+*zhihu_question_id 表格字段*
 
 ![](image/postgres2.png )
 
-###2.获取关键词相关问题URL列表存储到数据库  #######
+2.获取关键词相关问题URL列表存储到数据库 
+---
 
 `url_list = zhihu.get_information_id()`
 
-###3.从数据库中筛选获取相关问题URL列表  #######
+3.从数据库中筛选获取相关问题URL列表
+--
 
 避免重复爬取
 
 出错后可由数据库中直接筛选问题url
 
-###4.爬取信息  #######
+4.爬取信息
+--
 
 `zhihu.get_information(url)`
 
-###5.结果示例  #######
+5.结果示例
+--
 
 ![](image/results1.png )
 
