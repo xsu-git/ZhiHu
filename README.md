@@ -10,9 +10,16 @@
 ![](https://img.shields.io/pypi/v/nine.svg?color=green&label=version)
 -----
 
+2019-4-25
+--
+- 已开放api，无需配置运行脚本直接调用接口即可获得相同数据
+
+  - 详情项目移步：
+    - https://github.com/suxin1995/Flask_Api-spider
+
 
 1.配置
----
+--
 
 **a.  实例化 ZhiHu 类** 
 
