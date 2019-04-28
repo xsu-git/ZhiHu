@@ -23,41 +23,34 @@
 
 **a.  实例化 ZhiHu 类** 
 
-`zhihu = ZhiHu(phone,password,username,keyword,conn,cur)`
+`zhihu = ZhiHu(phone,password,username,keyword)`
 >需要配置账号信息：手机号，密码，用户名
 
 >需要配置搜索信息信息： 关键词
 
->需要配置数据库连接存储信息： 
 
-**b. 数据库表字段** 
 
-*zhihu_answer 表格字段* 
-
-![](image/postgres1.png )
-
-*zhihu_question_id 表格字段*
-
-![](image/postgres2.png )
-
-2.获取关键词相关问题URL列表存储到数据库 
----
-
-`url_list = zhihu.get_information_id()`
-
-3.从数据库中筛选获取相关问题URL列表
+2.爬取信息
 --
 
-避免重复爬取
+获取相关问题URL:
 
-出错后可由数据库中直接筛选问题url
+`zhihu.get_information_id()`
 
-4.爬取信息
---
+获取该url下全部回答:
 
 `zhihu.get_information(url)`
 
-5.结果示例
+3.数据存储
+--
+当前demo只是简单的print
+
+可自定义数据处理函数
+
+将数据保存txt 或 数据库中
+
+
+4.结果示例
 --
 
 ![](image/results1.png )

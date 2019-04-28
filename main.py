@@ -15,7 +15,7 @@ import re
 
 class ZhiHu(object):
 
-    def __init__(self,phone,password,username,keyword,conn,cur):
+    def __init__(self,phone,password,username,keyword):
         self.timestamp = int(time.time() * 1000)
         self.phone = phone
         self.password = password
@@ -29,8 +29,7 @@ class ZhiHu(object):
         self.session = requests.session()
         self.session.cookies = cookiejar.LWPCookieJar('cookie.txt')  # 保存的cookie文件
         self.keyword = keyword
-        self.cur = cur
-        self.conn = conn
+
 
 
         with open('get_formdata.js', 'r', encoding='utf-8') as f:
@@ -148,8 +147,6 @@ class ZhiHu(object):
                     #存储数据
                     if url not in url_list:
                         url_list.append(url)
-                        self.cur.execute("INSERT INTO zhihu_question_id (url,keyword,page,date ) values ('{0}','{1}','{2}','{3}')".format(url,keyword,index,now_date))
-                        self.conn.commit()
         return url_list
 
     #根据url获取问题下所有回答 和 作者相关信息
@@ -196,16 +193,6 @@ class ZhiHu(object):
                         information_dict['author_headline']  = m['author']['headline']  #回答用户签名
                         information_dict['author_gender']  = m['author']['gender']  #回答用户性别  1 男  -1 未知 0 女
                         print(information_dict)
-                        self.cur.execute("INSERT INTO zhihu_answer (data_type,question_title,question_url,question_create_time,question_update_time,author_name,"
-                                         "author_gender,author_headline,author_url,author_picture,answer_content,answer_voteup_count,answer_comment_count,"
-                                         "answer_create_time,answer_update_time,answer_url ) values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}',"
-                                         "'{8}','{9}','{10}','{11}','{12}','{13}','{14}','{15}')".format(information_dict['data_type'],information_dict['question_title'],information_dict['question_url'],
-                                                                                    information_dict['question_create_time'],information_dict['question_update_time'],information_dict['author_name'],
-                                                                                    information_dict['author_gender'],information_dict['author_headline'],information_dict['author_url'],
-                                                                                    information_dict['author_picture'],information_dict['answer_content'], information_dict['answer_voteup_count'],
-                                                                                    information_dict['answer_comment_count'],information_dict['answer_create_time'],information_dict['answer_update_time'],
-                                                                                    information_dict['answer_url']))
-                        self.conn.commit()
         #文章
         else:
             html = self.session.get(origin_url, headers=self.headers).text
@@ -226,41 +213,20 @@ class ZhiHu(object):
             information_dict['author_picture']  = json_html['author']['avatar_url'] #文章用户头像地址
             information_dict['author_headline']  = json_html['author']['description']  #文章用户签名
             information_dict['author_gender']  = json_html['author']['gender']  #w文章用户性别  1 男  -1 未知 0 女
-
-            self.cur.execute("INSERT INTO zhihu_answer (data_type,question_title,author_name,"
-                             "author_gender,author_headline,author_url,author_picture,answer_content,answer_voteup_count,answer_comment_count,"
-                             "answer_create_time,answer_update_time,answer_url ) values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}',"
-                             "'{8}','{9}','{10}','{11}','{12}')".format(information_dict['data_type'],information_dict['question_title'],
-                                                                                             information_dict['author_name'],
-                                                                                             information_dict['author_gender'],information_dict['author_headline'],information_dict['author_url'],
-                                                                                             information_dict['author_picture'],information_dict['answer_content'], information_dict['answer_voteup_count'],
-                                                                                             information_dict['answer_comment_count'],information_dict['answer_create_time'],information_dict['answer_update_time'],
-                                                                                             information_dict['answer_url']))
-            self.conn.commit()
+            print(information_dict)
 
 if __name__ == '__main__':
-    #配置数据库
-    conn = psycopg2.connect(database="postgres", user="postgres", password="19950626", host="47.100.18.128", port="5432")
-    cur = conn.cursor()
+
     #配置账号信息
     phone = ''  # 账号
     password = ''  # 密码
     username = ''  # 用户名，用于验证登陆
     keyword = input('输入搜索的关键词:')
 
-    zhihu = ZhiHu(phone,password,username,keyword,conn,cur)
+    zhihu = ZhiHu(phone,password,username,keyword)
     zhihu.read_cookie2login()
-    #1
+
     url_list = zhihu.get_information_id()
     for url in url_list:
        zhihu.get_information(url)
-    conn.close()
 
-    #避免重复爬取 从数据库中筛选需要爬取的url
-
-    #2
-    # cur.execute("select url from zhihu_question_id where date = '2019-04-11' and keyword = '刘鑫'")
-    # url_list = cur.fetchall()
-    # for url in url_list:
-    #     zhihu.get_information(url[0])
-    # conn.close()
